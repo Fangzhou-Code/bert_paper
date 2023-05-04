@@ -355,7 +355,7 @@ for name, parms in model.named_parameters():
         break
     pki = passKeyInformation.passClass()
     parms = pki.get_parms()
-    loaded_parms = pki.get_parms();
+    loaded_parms = pki.get_parms()
 print(loaded_parms)
 print("==========")
 
