@@ -2,7 +2,7 @@ import torch
 from datasets import load_dataset
 import random
 import GPUandCPU_allocation
-import passKeyInformation
+from passKeyInformation import passClass
 
 
 #print("=====BS_Inference_of_Chinese_Sentence_Relationships=====")
@@ -306,7 +306,11 @@ def test():
 # print("==========")
 
 #8. 传递参数
-def passParms():
+loaded_parms = None
+def set_parms(value):
+    global loaded_parms
+    loaded_parms = value
+def get_parms():
     return loaded_parms
 
 
@@ -468,14 +472,13 @@ for name, parms in model.named_parameters():
         break
     print('-->name:', name)
     print('-->para:', parms)
-    loaded_parms = parms
+    set_parms(parms)# 传递参数
+    print("->loaded_parms:", loaded_parms)
     print('-->grad_requirs:', parms.requires_grad)
     print('-->grad_value:', parms.grad)
     print("===")
 print("->optimizer:", optimizer)
-print("->loaded_parms:", loaded_parms)
-pki = passKeyInformation.passClass()
-pki.set_parms(loaded_parms)  # 传递参数
+
 print("==========")
 
 

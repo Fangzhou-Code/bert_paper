@@ -1,8 +1,9 @@
 import torch
 from datasets import load_dataset
 import random
-import passKeyInformation
+from passKeyInformation import passClass
 import GPUandCPU_allocation
+import BS_Inference_of_Chinese_Sentence_Relationships
 
 
 
@@ -353,9 +354,8 @@ for name, parms in model.named_parameters():
     temp += 1
     if temp == 2:
         break
-    pki = passKeyInformation.passClass()
-    parms = pki.get_parms()
-    loaded_parms = pki.get_parms()
+    parms = BS_Inference_of_Chinese_Sentence_Relationships.get_parms()
+    loaded_parms = parms
 print(loaded_parms)
 print("==========")
 
@@ -434,5 +434,6 @@ print("==========")
 print("=====7.test=====")
 test()
 print("==========")
+
 
 print("=====end=====")

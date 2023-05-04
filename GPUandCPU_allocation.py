@@ -44,7 +44,7 @@ def allocation():
             else:
                 # 如果没有可用GPU或GPU负载过高，则将任务分配给CPU
                 # TODO：编写将任务分配给CPU的代码
-                print("由于CPU任务")
+                print("属于CPU任务")
                 print(device)
                 print("=====end=====")
                 device = 'CPU'
