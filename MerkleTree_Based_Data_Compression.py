@@ -1,20 +1,14 @@
 '''
+名称：基于merkle tree的数据压缩算法
+作用：6GBS压缩数据发往区块链
+原理：
 Merkle树是一种哈希树，它可以用来验证大量数据的完整性。在Merkle树中，每个叶子节点表示一个数据块的哈希值，而每个非叶子节点表示两个相邻的子节点的哈希值的拼接结果。根节点的哈希值即为整个Merkle树的哈希值。
-
 该程序中的compress_data函数将数据按照固定大小划分成块，并计算每个块的哈希值，然后构建Merkle树并返回根节点的哈希值以及数据块数量。具体来说，compress_data函数的实现步骤如下：
-
-将输入的字符串数据按照固定大小（这里设为1024字节）划分成若干个块。
-对每个块计算SHA-256哈希值，并将所有哈希值放入一个列表中。
-使用Merkle树算法（该程序中使用迭代方法）构建哈希树，得到根节点的哈希值。
-返回根节点的哈希值以及数据块数量。
-
-decompress_data函数则是对压缩后的数据进行解压缩的操作，它需要传入根节点的哈希值以及数据块数量。具体来说，decompress_data函数的实现步骤如下：
-    构建一个由空字符串组成的列表，其长度为数据块数量加一。
-    将根节点的哈希值放入列表最后一个位置。
-    逆向迭代计算每个块的哈希值，直到计算出第一个块的哈希值。
-    将所有块拼接起来并返回结果。
-    需要注意的是，该程序中在使用Merkle树算法时可能会出现递归深度过大的问题，这里我们根据实际需求将代码修改为了使用迭代方式构建Merkle树。
-'''
+    将输入的字符串数据按照固定大小（这里设为1024字节）划分成若干个块。
+    对每个块计算SHA-256哈希值，并将所有哈希值放入一个列表中。
+    使用Merkle树算法（该程序中使用迭代方法）构建哈希树，得到根节点的哈希值。
+    返回根节点的哈希值以及数据块数量。
+'''''
 import hashlib
 
 class MerkleTree:
@@ -30,11 +24,11 @@ class MerkleTree:
     #构建merkle tree
     def build(self):
         transactions = self.transactions
-        print(type(self.transactions), len(self.transactions), transactions)
+        # print(type(self.transactions), len(self.transactions), transactions)
         past_transaction = self.past_transaction
         tree = self.tree
         n = len(transactions)
-        print("n=",n)
+        # print("n=",n)
         if n % 2 == 1: #判断交易记录数是否为奇数，如果是则在列表末尾添加一个空字符串。
             transactions.append('')
             n += 1
@@ -57,13 +51,13 @@ class MerkleTree:
                     hash_value = hashlib.sha256((str(current) + str(current_right)).encode('utf-8')).hexdigest()
                     tree.append(hash_value)
             transactions = tree.copy() #每次把之前产生的哈希值给到transactions重新迭代
-            print(type(self.transactions), len(self.transactions), transactions)
+            # print(type(self.transactions), len(self.transactions), transactions)
             past_transaction.clear()
             tree.clear()
 
         # 将最终的根哈希值赋值给实例变量
         self.transactions = transactions
-        print(type(self.transactions), len(self.transactions),transactions)
+        # print(type(self.transactions), len(self.transactions),transactions)
 
     def get_root(self):
         return self.transactions
@@ -128,16 +122,16 @@ def compress_data(data):
 
 
 
-if __name__ == '__main__':
-    data = 'Hello world' * 100
-
-    # 压缩数据并输出压缩率
-    compressed_root_hash, num_blocks = compress_data(data)
-
-    compressed_size = (num_blocks + 1) * 32
-    original_size = len(data.encode('utf-8'))
-    compression_ratio = compressed_size / original_size
-    print(f'Compression ratio: {compression_ratio:.2f}')
+# if __name__ == '__main__':
+#     data = 'Hello world' * 100
+#     print(type(data))
+#     # 压缩数据并输出压缩率
+#     compressed_root_hash, num_blocks = compress_data(data)
+#
+#     compressed_size = (num_blocks + 1) * 32
+#     original_size = len(data.encode('utf-8'))
+#     compression_ratio = compressed_size / original_size
+#     print(f'Compression ratio: {compression_ratio:.2f}')
 
     # 解压缩数据并比较原始数据
     # decompressed_data = decompress_data(compressed_root_hash, num_blocks)

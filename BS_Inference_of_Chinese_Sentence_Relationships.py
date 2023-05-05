@@ -2,7 +2,6 @@ import torch
 from datasets import load_dataset
 import random
 import GPUandCPU_allocation
-from passKeyInformation import passClass
 
 
 #print("=====BS_Inference_of_Chinese_Sentence_Relationships=====")
