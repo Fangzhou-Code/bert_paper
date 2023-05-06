@@ -2,7 +2,7 @@ import torch
 from datasets import load_dataset
 import random
 import GPUandCPU_allocation
-
+import Differential_Privacy
 
 #print("=====BS_Inference_of_Chinese_Sentence_Relationships=====")
 #1. 定义数据集
@@ -262,7 +262,6 @@ def test():
     model.eval()
     correct = 0
     total = 0
-
     loader_test = torch.utils.data.DataLoader(dataset=Dataset('validation'),
                                               batch_size=32,
                                               collate_fn=collate_fn,
@@ -304,11 +303,16 @@ def test():
 # test()
 # print("==========")
 
+
+
 #8. 传递参数
 loaded_parms = None
 def set_parms(value):
     global loaded_parms
     loaded_parms = value
+    loaded_parms_data = loaded_parms.data
+    loaded_parms_array = loaded_parms_data.numpy()
+    loaded_parms = Differential_Privacy.add_noise(loaded_parms_array, epsilon=0.9)
 def get_parms():
     return loaded_parms
 

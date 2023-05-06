@@ -3,7 +3,7 @@ from datasets import load_dataset
 import random
 import GPUandCPU_allocation
 import BS_Inference_of_Chinese_Sentence_Relationships
-
+import Differential_Privacy
 
 
 #1. 定义数据集
@@ -360,9 +360,13 @@ for name, parms in model.named_parameters():
     temp += 1
     if temp == 2:
         break
-    parms = BS_Inference_of_Chinese_Sentence_Relationships.get_parms()
+    parms_array_noisy = BS_Inference_of_Chinese_Sentence_Relationships.get_parms()
+    parms_array = Differential_Privacy.remove_noise(parms_array_noisy, epsilon=0.9)
+    parms_data = torch.tensor(parms_array)
+    parms = torch.nn.Parameter(parms_data)
     set_parms(parms)
 print(loaded_parms)
+print("parms:",loaded_parms)
 print("==========")
 
 #6. 训练
