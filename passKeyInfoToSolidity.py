@@ -6,7 +6,10 @@ import MerkleTree_Based_Data_Compression
 import MBS_Inference_of_Chinese_Sentence_Relationships
 from torch import tensor
 from web3 import Web3
+import time
 
+#test delay
+start = time.time()
 
 print("=====passKeyInfoToSolidity=====")
 # Connect to Remix via its HTTP provider
@@ -102,6 +105,11 @@ tx_hash = my_contract.functions.storeData(compressed_root_hash[0]).transact()
 # web3.eth.waitForTransactionReceipt(tx_hash)
 receipt = web3.eth.wait_for_transaction_receipt(tx_hash)
 
+# test delay
+end = time.time()
+
+
 print('Data set to:', my_contract.functions.getData().call())
-print(receipt)
+print("receipt:",receipt)
+print("delay:",end-start)
 print("=====end=====")
