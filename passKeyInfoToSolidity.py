@@ -107,9 +107,13 @@ receipt = web3.eth.wait_for_transaction_receipt(tx_hash)
 
 # test delay
 end = time.time()
-
+delay = end - start
 
 print('Data set to:', my_contract.functions.getData().call())
 print("receipt:",receipt)
-print("delay:",end-start)
+print("delay:",delay)
 print("=====end=====")
+
+#8. 传递参数张量
+def get_parms():
+    return pass_parms_data

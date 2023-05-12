@@ -19,7 +19,13 @@ def add_noise(data, epsilon):
     # 计算噪声范围
     noise_range = sensitivity / epsilon
     # 添加噪声
+
     noisy_data = data + np.random.uniform(-noise_range, noise_range, size=data.shape)
+
+    # 计算信噪比
+    # snr = 20 * np.log10(np.linalg.norm(data) / np.linalg.norm(noisy_data))
+    # print("Signal-to-Noise Ratio (SNR):", snr, "dB")
+
     print("=====Differential_Privacy=====")
     print("原始数据：", data)
     print("添加噪声后的数据：", noisy_data)
