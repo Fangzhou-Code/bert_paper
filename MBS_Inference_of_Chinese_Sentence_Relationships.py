@@ -2,9 +2,10 @@ import torch
 from datasets import load_dataset
 import random
 import GPUandCPU_allocation
+import BS_Inference_of_Chinese_Sentence_Relationships
 import Differential_Privacy
 
-#print("=====BS_Inference_of_Chinese_Sentence_Relationships=====")
+
 #1. 定义数据集
 class Dataset(torch.utils.data.Dataset):
     def __init__(self, split):
@@ -46,10 +47,11 @@ class Dataset(torch.utils.data.Dataset):
 # print("==========")
 
 
+
 #2. 加载字典和分词工具
 # from transformers import BertTokenizer
 # token = BertTokenizer.from_pretrained('bert-base-chinese')
-# print("=====2.token======")
+# print("=====2.token=====")
 # print(token)
 # print("==========")
 
@@ -94,7 +96,7 @@ def collate_fn(data):
 #         labels) in enumerate(loader):
 #     break
 #
-# print("=====3======")
+# print("=====3=====")
 # print("len(loader):",len(loader))
 # print("token.decode(input_ids[0]):",token.decode(input_ids[0]))
 # print("input_ids.shape: ", input_ids.shape, "attention_mask.shape: ", attention_mask.shape, "token_type_ids.shape: ",token_type_ids.shape, "labels: ",labels)
@@ -109,18 +111,18 @@ def collate_fn(data):
 #不训练,不需要计算梯度False
 # for param in pretrained.parameters():
 #     param.requires_grad_(False)
-
-
-
+#输出Inference_of_Chinese_Sentence_Relationships传递过来的parms
+# print("=====4=====")
 
 
 #模型试算
 # out = pretrained(input_ids=input_ids,
 #            attention_mask=attention_mask,
 #            token_type_ids=token_type_ids)
-# print("=====4.out.last_hidden_state.shape======")
-# print(out.last_hidden_state.shape) #每个批次8句话，每句话45字，每个字768维度
-# print("===========")
+#
+# print("out.last_hidden_state.shape: ", out.last_hidden_state.shape) #每个批次8句话，每句话45字，每个字768维度
+# print("==========")
+
 
 
 #5. 定义下游任务模型
@@ -141,30 +143,24 @@ class Model(torch.nn.Module):
 
         return out
 
-
 # model = Model()
-
-# print("=====5.model======")
+# print("=====5.model=====")
 # print(model(input_ids=input_ids,
 #       attention_mask=attention_mask,
 #       token_type_ids=token_type_ids).shape)
-# print("===========")
+# print("==========")
 
 
-# print("=====更新======")
+# print("=====更新参数=====")
 # temp = 0 #控制打印的参数个数
 # for name, parms in model.named_parameters():
 #     temp += 1
 #     if temp == 2:
 #         break
-#     print('-->name:', name)
-#     print('-->para:', parms)
-#     print('-->grad_requirs:', parms.requires_grad)
-#     print('-->grad_value:', parms.grad)
-#     print("====")
+#     parms = passKeyInformation.passParms()
+#     loaded_parms = passKeyInformation.passParms();
+# print(loaded_parms)
 # print("==========")
-
-
 
 #6. 训练
 # from transformers import AdamW
@@ -233,27 +229,9 @@ class Model(torch.nn.Module):
 #
 #         print(i, loss.item(), accuracy)
 #
-#     if i == 20:
+#     if i == 50:
 #         break
 # print("==========")
-#
-# print("=====更新之后=====")
-# temp = 0 ##控制打印的参数个数
-# for name, parms in model.named_parameters():
-#     temp += 1
-#     if temp == 2:
-#         break
-#     print('-->name:', name)
-#     print('-->para:', parms)
-#     loaded_parms = parms
-#     print('-->grad_requirs:', parms.requires_grad)
-#     print('-->grad_value:', parms.grad)
-#     print("===")
-# print("->optimizer:", optimizer)
-#
-# print("->loaded_parms:", loaded_parms)
-# print("==========")
-
 
 
 
@@ -262,6 +240,7 @@ def test():
     model.eval()
     correct = 0
     total = 0
+
     loader_test = torch.utils.data.DataLoader(dataset=Dataset('validation'),
                                               batch_size=32,
                                               collate_fn=collate_fn,
@@ -299,10 +278,8 @@ def test():
         total += len(labels)
 
     print(correct / total)
-
 # test()
 # print("==========")
-
 
 
 #8. 传递参数
@@ -310,26 +287,19 @@ loaded_parms = None
 def set_parms(value):
     global loaded_parms
     loaded_parms = value
-    loaded_parms_data = loaded_parms.data
-    loaded_parms_array = loaded_parms_data.numpy()
-    loaded_parms = Differential_Privacy.add_noise(loaded_parms_array, epsilon=0.9)
 def get_parms():
     return loaded_parms
 
 
-
 # 执行
-print("=====BS_Inference_of_Chinese_Sentence_Relationships=====")
+print("=====6GBS_Inference_of_Chinese_Sentence_Relationships=====")
+
 # 分配资源
 device = GPUandCPU_allocation.allocation()
-#1. 定义数据集
-if device=='GPU':
-    # 将数据加载到GPU上
-    dataset = Dataset('train').cuda()
-else:
-    dataset = Dataset('train')
-    sentence1, sentence2, label = dataset[0]
 
+#1. 定义数据集
+dataset = Dataset('train')
+sentence1, sentence2, label = dataset[0]
 print("=====1.len(dataset), sentence1, sentence2, label======")
 print(len(dataset), sentence1, sentence2, label)
 print("==========")
@@ -337,8 +307,7 @@ print("==========")
 #2. 加载字典和分词工具
 from transformers import BertTokenizer
 token = BertTokenizer.from_pretrained('bert-base-chinese')
-
-print("=====2.token======")
+print("=====2.token=====")
 print(token)
 print("==========")
 
@@ -353,12 +322,11 @@ for i, (input_ids, attention_mask, token_type_ids,
         labels) in enumerate(loader):
     break
 
-print("=====3======")
+print("=====3=====")
 print("len(loader):",len(loader))
 print("token.decode(input_ids[0]):",token.decode(input_ids[0]))
 print("input_ids.shape: ", input_ids.shape, "attention_mask.shape: ", attention_mask.shape, "token_type_ids.shape: ",token_type_ids.shape, "labels: ",labels)
 print("==========")
-
 
 #4. 加载预训练模型
 from transformers import BertModel
@@ -366,39 +334,42 @@ pretrained = BertModel.from_pretrained('bert-base-chinese')
 #不训练,不需要计算梯度False
 for param in pretrained.parameters():
     param.requires_grad_(False)
+#输出Inference_of_Chinese_Sentence_Relationships传递过来的parms
+print("=====4=====")
+
 #模型试算
 out = pretrained(input_ids=input_ids,
            attention_mask=attention_mask,
            token_type_ids=token_type_ids)
-print("=====4.out.last_hidden_state.shape======")
-print(out.last_hidden_state.shape) #每个批次8句话，每句话45字，每个字768维度
-print("===========")
+
+print("out.last_hidden_state.shape: ", out.last_hidden_state.shape) #每个批次8句话，每句话45字，每个字768维度
+print("==========")
 
 
-
-#5. 下游模型
-print("=====5.model======")
+#5. 定义下游模型
 model = Model()
+print("=====5.model=====")
 print(model(input_ids=input_ids,
       attention_mask=attention_mask,
       token_type_ids=token_type_ids).shape)
-print("===========")
+print("==========")
 
-print("=====更新之前======")
+print("=====更新参数=====")
 temp = 0 #控制打印的参数个数
 for name, parms in model.named_parameters():
     temp += 1
     if temp == 2:
         break
-    print('-->name:', name)
-    print('-->para:', parms)
-    print('-->grad_requirs:', parms.requires_grad)
-    print('-->grad_value:', parms.grad)
-    print("====")
+    parms_array_noisy = BS_Inference_of_Chinese_Sentence_Relationships.get_parms()
+    parms_array = Differential_Privacy.remove_noise(parms_array_noisy, epsilon=0.9)
+    parms_data = torch.tensor(parms_array)
+    parms = torch.nn.Parameter(parms_data)
+    set_parms(parms)
+print(loaded_parms)
+print("parms:",loaded_parms)
 print("==========")
 
-
-# 6. 训练
+#6. 训练
 from transformers import AdamW
 '''
 优化器的类型是AdamW，它将被用于调整神经网络模型中的参数，以尽可能地减小训练误差。
@@ -426,6 +397,7 @@ CrossEntropyLoss函数接收两个参数：模型的输出和目标类别。
 '''
 criterion = torch.nn.CrossEntropyLoss()
 
+
 '''
 model.train() 是 Hugging Face 库中的一个方法，用于将模型设置为训练模式。
 调用此方法时，模型会启用一些仅在训练期间使用的功能，例如dropout正则化和梯度计算。
@@ -436,6 +408,7 @@ model.train() 确保这个过程所需的计算得以启用。
 需要注意的是，在训练完成后，应该调用 model.eval() 方法将模型切换回评估模式，以禁用这些功能以获得准确的预测结果。
 '''
 model.train()
+
 
 '''
 首先，使用 enumerate() 函数对数据进行迭代，获取每个 batch 的输入数据 input_ids、attention_mask、token_type_ids 和标签 labels。
@@ -463,31 +436,14 @@ for i, (input_ids, attention_mask, token_type_ids,
 
         print(i, loss.item(), accuracy)
 
-    if i == 20:
+    if i == 10:
         break
 print("==========")
-
-print("=====更新之后=====")
-temp = 0 ##控制打印的参数个数
-for name, parms in model.named_parameters():
-    temp += 1
-    if temp == 2:
-        break
-    print('-->name:', name)
-    print('-->para:', parms)
-    set_parms(parms)# 传递参数
-    print("->loaded_parms:", loaded_parms)
-    print('-->grad_requirs:', parms.requires_grad)
-    print('-->grad_value:', parms.grad)
-    print("===")
-print("->optimizer:", optimizer)
-
-print("==========")
-
 
 #7. 测试
 print("=====7.test=====")
 test()
 print("==========")
+
 
 print("=====end=====")
