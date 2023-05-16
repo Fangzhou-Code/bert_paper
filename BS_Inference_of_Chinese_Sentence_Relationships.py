@@ -307,12 +307,16 @@ def test():
 
 #8. 传递参数
 loaded_parms = None
+noise = None
+# 传递噪声
+def set_noise(value):
+    noise = value
 def set_parms(value):
     global loaded_parms
     loaded_parms = value
     loaded_parms_data = loaded_parms.data
     loaded_parms_array = loaded_parms_data.numpy()
-    loaded_parms = Differential_Privacy.add_noise(loaded_parms_array, epsilon=0.9)
+    loaded_parms = Differential_Privacy.add_noise(loaded_parms_array, epsilon=0.9,noise=noise)
 def get_parms():
     return loaded_parms
 

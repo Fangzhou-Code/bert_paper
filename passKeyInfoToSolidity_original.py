@@ -1,5 +1,6 @@
 '''
 用来传递参数给区块链
+对比框架加密的数据传输，将不加密的参数进行传输
 '''
 import json
 import MerkleTree_Based_Data_Compression
@@ -7,6 +8,7 @@ import MBS_Inference_of_Chinese_Sentence_Relationships
 from torch import tensor
 from web3 import Web3
 import time
+import hashlib
 
 #test delay
 start = time.time()
@@ -80,38 +82,25 @@ print("len(pass_parms_array): ",len(pass_parms_array))
 print("pass_parms_array: ",pass_parms_array)
 
 # 遍历数组并读取每个元素
-data = ""
+hash = ""
 for i in range(pass_parms_array.shape[0]):
     for j in range(pass_parms_array.shape[1]):
         # 使用 Python 的哈希函数计算散列值
-        # hash_value = hash(pass_parms_array[i, j])
-		#tx_hash = my_contract.functions.receiveData(hash_value).transact()
-        # print("Element at position ({}, {}): {}".format(i, j, hash_value))
-                data = data+str(pass_parms_array[i,j])
-data = data
-print("data:",data)
-# 压缩数据并输出压缩率
-compressed_root_hash, num_blocks = MerkleTree_Based_Data_Compression.compress_data(data)
-compressed_size = (num_blocks + 1) * 32
-original_size = len(data.encode('utf-8'))
-compression_ratio = compressed_size / original_size
-print("compressed_root_hash:",compressed_root_hash)
-print("type(compressed_root_hash):",type(compressed_root_hash[0]))
-print(f'Compression ratio: {compression_ratio:.2f}')
+        hash = hashlib.sha256(str(pass_parms_array[i,j]).encode('utf-8')).hexdigest()
+        print("hash:",hash,"    type(hash):",type(hash))
+        # send data to smart contract
+        tx_hash = my_contract.functions.storeData(hash).transact()
+        # web3.eth.waitForTransactionReceipt(tx_hash)
+        receipt = web3.eth.wait_for_transaction_receipt(tx_hash)
+        print('Data set to:', my_contract.functions.getData().call())
+        print("receipt:", receipt)
 
-# send data to smart contract
-tx_hash = my_contract.functions.storeData(compressed_root_hash[0]).transact()
-
-# web3.eth.waitForTransactionReceipt(tx_hash)
-receipt = web3.eth.wait_for_transaction_receipt(tx_hash)
 
 # test delay
 end = time.time()
 delay = end - start
 
-print('Data set to:', my_contract.functions.getData().call())
-print("receipt:",receipt)
+
 print("delay:",delay)
 print("=====end=====")
-
 

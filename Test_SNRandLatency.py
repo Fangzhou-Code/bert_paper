@@ -18,6 +18,9 @@ signal = passKeyInfoToSolidity.pass_parms_array
 noise_levels = [0.1,4,10] # different SNR levels to test
 delays = []
 
+noise = None
+def passNoise(noise):
+    return noise
 
 def test_delay():
     for noise_level in noise_levels:

@@ -13,14 +13,14 @@ import numpy as np
     算法优化：在差分隐私还原算法中，可能存在一些可以优化的地方，例如使用更高效的算法、优化算法参数、或者改进算法流程等。这些优化措施有助于提高还原后数据的准确性。
     综上所述，解决差分隐私还原后数据与原数据差别大的问题，需要综合考虑隐私保护和数据还原准确性之间的关系，选择适当的差分隐私方案，并结合具体情况采取相应的方法进行调整和优化。
 '''
-def add_noise(data, epsilon):
+def add_noise(data, epsilon, noise):
     # 计算灵敏度
     sensitivity = 1.0
     # 计算噪声范围
     noise_range = sensitivity / epsilon
     # 添加噪声
-
-    noisy_data = data + np.random.uniform(-noise_range, noise_range, size=data.shape)
+    #noisy_data = data + np.random.uniform(-noise_range, noise_range, size=data.shape)
+    fusion_data = data + noise
 
     # 计算信噪比
     # snr = 20 * np.log10(np.linalg.norm(data) / np.linalg.norm(noisy_data))
