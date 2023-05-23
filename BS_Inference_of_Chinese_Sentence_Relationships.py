@@ -3,6 +3,7 @@ from datasets import load_dataset
 import random
 import GPUandCPU_allocation
 import Differential_Privacy
+import RegisterInBlockchain
 
 #print("=====BS_Inference_of_Chinese_Sentence_Relationships=====")
 #1. 定义数据集
@@ -489,5 +490,10 @@ print("==========")
 print("=====7.test=====")
 test()
 print("==========")
+
+#8. 区块链上注册
+RegisterInBlockchain.register(RegisterInBlockchain.puf_function("BS1"))
+
+
 
 print("=====end=====")

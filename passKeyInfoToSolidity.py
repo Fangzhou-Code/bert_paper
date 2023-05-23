@@ -33,6 +33,7 @@ for i in range(pass_parms_array.shape[0]):
                 data = data+str(pass_parms_array[i,j])
 data = data
 print("data:",data)
+
 # 压缩数据并输出压缩率
 compressed_root_hash, num_blocks = MerkleTree_Based_Data_Compression.compress_data(data)
 compressed_size = (num_blocks + 1) * 32
@@ -41,6 +42,7 @@ compression_ratio = compressed_size / original_size
 print("compressed_root_hash:",compressed_root_hash)
 print("type(compressed_root_hash):",type(compressed_root_hash[0]))
 print(f'Compression ratio: {compression_ratio:.2f}')
+
 
 # Connect to Remix via its HTTP provider
 web3 = Web3(Web3.HTTPProvider('http://localhost:8545'))

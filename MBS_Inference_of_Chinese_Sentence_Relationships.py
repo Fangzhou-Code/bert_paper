@@ -4,6 +4,7 @@ import random
 import GPUandCPU_allocation
 import BS_Inference_of_Chinese_Sentence_Relationships
 import Differential_Privacy
+import RegisterInBlockchain
 
 
 #1. 定义数据集
@@ -445,5 +446,7 @@ print("=====7.test=====")
 test()
 print("==========")
 
+#8. 区块链上注册
+RegisterInBlockchain.register(RegisterInBlockchain.puf_function("MBS1"))
 
 print("=====end=====")
