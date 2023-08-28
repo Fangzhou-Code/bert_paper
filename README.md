@@ -55,3 +55,5 @@ you may think fantastic!
 However, my code so sucks.
 
 i'm sorry wasting your time to view in this repo.
+
+<font color=red>This repo has been abandoned.</font>
